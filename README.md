@@ -1,4 +1,4 @@
-# GHRU-test
+# QC spreadsheet analysis
 
 The task was to explore, filter and summarize the distribution of numeric variables within a QC spreadsheet with graphical tools
 
