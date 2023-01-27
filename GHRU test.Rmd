@@ -68,30 +68,40 @@ data_num <- data %>%
               pattern = "quast.", replacement = "", matches ("quast.")) %>%
   rename_with(stringr::str_replace,
               pattern = ".metric_value", replacement = "", matches (".metric_value")) %>%
-  rename(contamination_percent = confindr.percentage_contamination)
+  rename(contamination_percent = confindr.percentage_contamination) 
+
+## obtaining names of column of data
+colnames(data_num)
 ```
 
 # Question 4
 ```{r Q4}
-## obtaining names of column of data
-colnames(data_num)
-
 ## range of total length
 range(data_num$`Total length (>= 1000 bp)`)
 
 ## Boxplot of Total length (>= 1000bp)
 ggplot(data_num) +
   geom_boxplot(aes(`Total length (>= 1000 bp)`)) +
-  scale_x_continuous(breaks = pretty_breaks(n = 16), minor_breaks = seq(6000000, 14000000, by = 500000), labels = label_number(suffix = "", scale = 1e-6)) +
-  labs(title = "Box blot showing total length (>= 1000 bp)", x = "Total length (in millions)") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1, size=10), axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.title = element_text(size=12), plot.title = element_text(size=15))
+  scale_x_continuous(breaks = pretty_breaks(n = 16), 
+                     minor_breaks = seq(6000000, 14000000, by = 500000), labels = label_number(suffix = "", scale = 1e-6)) +
+  labs(title = "Box blot showing the distribution of total length (>= 1000 bp) from a QC spreadsheet",
+       x = "Total length (in millions)") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, size=10), 
+        axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(), 
+        axis.title = element_text(size=12), 
+        plot.title = element_text(size=15))
 ```
+The box plot shows that while the median total length (>=1000 bp) is around 7,000,000 bp, there are outlier values of up to 13,500,000. Hence, the boxplot is skewed to the right.
 
 # Question 5
 ```{r Q5}
 ## tidying the data
 data_pivot <- data_num %>%
   pivot_longer(!sample_name, names_to = "metric", values_to = "value")
+
+## printing the first 20 rows of the tidy table
+head(data_pivot, 20)
 ```
 
 # Question 6
@@ -101,7 +111,16 @@ ggplot(data_pivot, aes(metric, value)) +
   geom_violin() +
   geom_jitter(position = position_jitter(seed = 1, width = 0.1)) +
   scale_y_continuous(trans = 'log2') +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1, size=10), axis.text.y = element_text(size=10), axis.title = element_text(size=12), plot.title = element_text(size=15)) + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1, size=10), 
+        axis.text.y = element_text(size=10), 
+        axis.title = element_text(size=12), 
+        plot.title = element_text(size=15)) + 
   ggtitle("Violin plot showing distribution of numerical variables in a QC spreadsheet")
 ```
+
+* The violin plot shows:
+  + a lot of strains have no contamination, with contaminated strains having less than 60% contamination. 
+  + N50 distribution is left skewed, with few strains having smaller N50 values. 
+  + The values of the total length are clustered close to the median. The distribution is not skewed as there are no distinct outliers.
+
 
